@@ -42,5 +42,5 @@ function parseManifest (manifestUri, manifestData) {
 
   return manifestLines;
 }
-
-module.exports = parseManifest;
+var exported = {parseManifest:parseManifest, parseResource:parseResource};
+module.exports = exported;

@@ -1,6 +1,6 @@
-var getIt = require('../');
+var index = require('../index.js');
 
-getIt({
+index.getIt({
     cwd: './',
     uri: 'https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8'
   },

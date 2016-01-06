@@ -2,10 +2,12 @@ var fs = require('fs');
 var path = require('path');
 var mkdirp = require('mkdirp');
 var fetch = require('fetch');
-var parseManifest = require('./parse.js');
+var parse = require('./parse.js');
 var async = require('async');
 
 var DEFAULT_CONCURRENCY = 5;
+
+
 
 function getCWDName (parentUri, localUri) {
   // Do I need to use node's URL object?
@@ -55,7 +57,7 @@ function getIt (options, done) {
     }
 
     // Parse playlist
-    var manifest = parseManifest(uri, body.toString());
+    var manifest = parse.parseManifest(uri, body.toString());
 
     // Save manifest
     fs.writeFileSync(path.resolve(cwd, playlistFilename), createManifestText(manifest, uri));
@@ -118,4 +120,11 @@ function getIt (options, done) {
   });
 }
 
-module.exports = getIt;
+
+
+
+
+var exported = {getIt:getIt, createManifestText:createManifestText, getCWDName:getCWDName};
+module.exports = exported;
+
+//module.exports = getIt;
