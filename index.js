@@ -47,6 +47,7 @@ function getIt (options, done) {
   var uri = options.uri;
   var cwd = options.cwd;
   var concurrency = options.concurrency || DEFAULT_CONCURRENCY;
+  var query = options.query;
   var playlistFilename = path.basename(uri);
 
   // Fetch playlist
@@ -75,9 +76,16 @@ function getIt (options, done) {
           var filename = path.basename(resource.line);
 
           console.log('Start fetching', resource.line);
-
+          
           // Fetch it to CWD (streaming)
           var segmentStream = new fetch.FetchStream(resource.line);
+          
+          //removes query parameters from filename
+          if (filename.indexOf('?') !== -1 && query == 'yes') {
+            console.log("Removing query parameters from file name.");
+            filename = filename.split('?').shift();
+          }
+
           var outputStream = fs.createWriteStream(path.resolve(cwd, filename));
 
           segmentStream.pipe(outputStream);
