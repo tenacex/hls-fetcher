@@ -4,8 +4,12 @@ var mkdirp = require('mkdirp');
 var fetch = require('fetch');
 var parse = require('./parse.js');
 var async = require('async');
+var decrypter = require('./decrypter.js')
 
 var DEFAULT_CONCURRENCY = 5;
+var usingEncryption = false;
+var keyUri;
+var encryptionIV;
 
 
 
@@ -38,6 +42,18 @@ function createManifestText (manifest, rootUri) {
       return subCWD + '/' + path.basename(line.line);
     } else if (line.type === 'segment') {
       return path.basename(line.line);
+    } else if (line.line.match(/^#EXT-X-KEY/i)) {
+      //we are using encryption!!!!!!
+      usingEncryption = true;
+      var newLine = line.line.split(':')[1];
+      newLine = newLine.split(',');
+        for (var i = 0; i < newLine.length; i++){
+          if (newLine[i].indexOf('IV=') != -1) {
+          encryptionIV = newLine[i].substring(3, newLine[i].length);
+        } else if (newLine[i].indexOf('URI=')) {
+          keyUri = newLine[i].substring(5, newLine[i].length - 1);
+        }
+      }
     }
     return line.line;
   }).join('\n');
@@ -49,7 +65,7 @@ function getIt (options, done) {
   var concurrency = options.concurrency || DEFAULT_CONCURRENCY;
   var query = options.query;
   var playlistFilename = path.basename(uri);
-
+  
   // Fetch playlist
   fetch.fetchUrl(uri, function getPlaylist (err, meta, body) {
     if (err) {
@@ -78,6 +94,7 @@ function getIt (options, done) {
           console.log('Start fetching', resource.line);
           
           // Fetch it to CWD (streaming)
+
           var segmentStream = new fetch.FetchStream(resource.line);
           
           //removes query parameters from filename
@@ -97,6 +114,13 @@ function getIt (options, done) {
 
           segmentStream.on('end', function () {
             console.log('Finished fetching', resource.line);
+            if (usingEncryption) {
+              var encryptedFile = fs.readFileSync(path.resolve(cwd, resource.line));
+              var decryptedFile = decrypter.decrypt(encryptedFile, keyUri, encryptionIV);
+              fs.writeFile(path.resolve(cwd, resource.line), decryptedFile, function (err) { 
+                if (err) throw err; 
+              });
+            }
             return done();
           });
         }, next);
