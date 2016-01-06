@@ -24,4 +24,5 @@ hls-fetcher -i http://example.com/hls_manifest.m3u8
     -i, --input        uri to m3u8 (required)
     -o, --output       output path (default:'./')
     -c, --concurrency  number of simultaneous fetches (default: 5)
+    -q, --query        remove query parameters. (default: 'no')
 ```
