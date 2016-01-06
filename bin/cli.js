@@ -10,12 +10,12 @@ var pessimist = require('pessimist')
     .alias('o', 'output')
     .default('o', './')
     .describe('o', 'output path (default:\'./\')')
-    .alias('q', 'query')
-    .default('q', 'no')
-    .describe('q', 'remove query parameters. (default: no)')
     .alias('c', 'concurrency')
     .default('c', 5)
     .describe('c', 'number of simultaneous fetches (default: 5)')
+    .alias('q', 'query')
+    .default('q', 'no')
+    .describe('q', 'remove query parameters. (default: no)')
     .argv;
 var getIt = require('../index.js').getIt;
 
