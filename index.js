@@ -17,7 +17,12 @@ function unicodeStringToTypedArray(s) {
     var binstr = escstr.replace(/%([0-9A-F]{2})/g, function(match, p1) {
         return String.fromCharCode('0x' + p1);
     });
-    var ua = new Uint8Array(binstr.length);
+    var newLength = binstr.length;
+    if (newLength % 32 != 0) {
+      var extra = newLength % 32;
+      newLength += extra;
+    }
+    var ua = new Uint8Array(newLength);
     Array.prototype.forEach.call(binstr, function (ch, i) {
         ua[i] = ch.charCodeAt(0);
     });
@@ -132,6 +137,7 @@ function getIt (options, done) {
               
               var encryptedFile = fs.readFileSync(path.resolve(cwd, filename), 'hex');
               var encryptedArray = unicodeStringToTypedArray(encryptedFile);
+
               var decryptedFile = decrypter.decrypt(encryptedArray, keyUri, encryptionIV);
               fs.writeFile(path.resolve(cwd, filename), decryptedFile, function (err) { 
 
