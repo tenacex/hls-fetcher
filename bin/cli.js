@@ -13,9 +13,8 @@ var pessimist = require('pessimist')
     .alias('c', 'concurrency')
     .default('c', 5)
     .describe('c', 'number of simultaneous fetches (default: 5)')
-    .alias('q', 'query')
-    .default('q', 'no')
-    .describe('q', 'remove query parameters. (default: no)')
+    .boolean('q')
+    .describe('q', 'remove query parameters')
     .argv;
 var getIt = require('../index.js').getIt;
 

@@ -7,8 +7,6 @@ var async = require('async');
 
 var DEFAULT_CONCURRENCY = 5;
 
-
-
 function getCWDName (parentUri, localUri) {
   // Do I need to use node's URL object?
   var parentPaths = path.dirname(parentUri).split('/');
@@ -76,7 +74,6 @@ function getIt (options, done) {
           var filename = path.basename(resource.line);
 
           console.log('Start fetching', resource.line);
-          
           // Fetch it to CWD (streaming)
           var segmentStream = new fetch.FetchStream(resource.line);
           
@@ -128,11 +125,8 @@ function getIt (options, done) {
   });
 }
 
-
-
-
-
-var exported = {getIt:getIt, createManifestText:createManifestText, getCWDName:getCWDName};
-module.exports = exported;
-
-//module.exports = getIt;
+module.exports = {
+  getIt:getIt,
+  createManifestText:createManifestText,
+  getCWDName:getCWDName
+}
