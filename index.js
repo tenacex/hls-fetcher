@@ -115,7 +115,7 @@ function getIt (options, done) {
           segmentStream.on('end', function () {
             console.log('Finished fetching', resource.line);
             if (usingEncryption) {
-              var encryptedFile = fs.readFileSync(path.resolve(cwd, resource.line));
+              var encryptedFile = fs.readFileSync(path.resolve(cwd, resource.line), 'hex');
               var decryptedFile = decrypter.decrypt(encryptedFile, keyUri, encryptionIV);
               fs.writeFile(path.resolve(cwd, resource.line), decryptedFile, function (err) { 
                 if (err) throw err; 
