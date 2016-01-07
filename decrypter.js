@@ -229,14 +229,17 @@ AES.prototype = {
  * @see https://tools.ietf.org/html/rfc2315
  */
 decrypt = function(encrypted, key, initVector) {
+  console.log(encrypted.byteOffset);
   var
     // word-level access to the encrypted bytes
+
     encrypted32 = new Int32Array(encrypted.buffer, encrypted.byteOffset, encrypted.byteLength >> 2),
 
     decipher = new AES(Array.prototype.slice.call(key)),
 
     // byte and word-level access for the decrypted output
     decrypted = new Uint8Array(encrypted.byteLength),
+    test = console.log(decrypted.byteOffset),
     decrypted32 = new Int32Array(decrypted.buffer),
 
     // temporary variables for working with the IV, encrypted, and

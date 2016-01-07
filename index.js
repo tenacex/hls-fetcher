@@ -5,12 +5,24 @@ var fetch = require('fetch');
 var parse = require('./parse.js');
 var async = require('async');
 var decrypter = require('./decrypter.js')
+var Buffer = require('buffer');
 
 var DEFAULT_CONCURRENCY = 5;
 var usingEncryption = false;
 var keyUri;
 var encryptionIV;
 
+function unicodeStringToTypedArray(s) {
+    var escstr = encodeURIComponent(s);
+    var binstr = escstr.replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode('0x' + p1);
+    });
+    var ua = new Uint8Array(binstr.length);
+    Array.prototype.forEach.call(binstr, function (ch, i) {
+        ua[i] = ch.charCodeAt(0);
+    });
+    return ua;
+}
 
 
 function getCWDName (parentUri, localUri) {
@@ -115,9 +127,14 @@ function getIt (options, done) {
           segmentStream.on('end', function () {
             console.log('Finished fetching', resource.line);
             if (usingEncryption) {
-              var encryptedFile = fs.readFileSync(path.resolve(cwd, resource.line), 'hex');
-              var decryptedFile = decrypter.decrypt(encryptedFile, keyUri, encryptionIV);
-              fs.writeFile(path.resolve(cwd, resource.line), decryptedFile, function (err) { 
+
+
+              
+              var encryptedFile = fs.readFileSync(path.resolve(cwd, filename), 'hex');
+              var encryptedArray = unicodeStringToTypedArray(encryptedFile);
+              var decryptedFile = decrypter.decrypt(encryptedArray, keyUri, encryptionIV);
+              fs.writeFile(path.resolve(cwd, filename), decryptedFile, function (err) { 
+
                 if (err) throw err; 
               });
             }
