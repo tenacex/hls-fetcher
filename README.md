@@ -25,3 +25,7 @@ hls-fetcher -i http://example.com/hls_manifest.m3u8
     -o, --output       output path (default:'./')
     -c, --concurrency  number of simultaneous fetches (default: 5)
 ```
+
+# Notes
+
+After running `hls-fetcher` from the command line, you will be presented with a visual menu that allows you to select which renditions of a stream to download. Please remember that the fetcher is limited by your bandwidth, and that it is possible to miss downloading segments if they fall out of the live window.
